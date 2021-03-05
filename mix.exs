@@ -43,7 +43,10 @@ defmodule LiveCue.MixProject do
       {:telemetry_poller, "~> 0.4"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 2.0"},
+      {:flac_parser, "~> 0.1.0"},
+      {:id3v2, "~> 0.1.2"},
+      {:cubdb, "~> 1.0.0-rc.7"},
     ]
   end
 

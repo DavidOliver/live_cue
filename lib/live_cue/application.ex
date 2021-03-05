@@ -12,9 +12,10 @@ defmodule LiveCue.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: LiveCue.PubSub},
       # Start the Endpoint (http/https)
-      LiveCueWeb.Endpoint
+      LiveCueWeb.Endpoint,
       # Start a worker by calling: LiveCue.Worker.start_link(arg)
       # {LiveCue.Worker, arg}
+      LiveCue.DB,
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
