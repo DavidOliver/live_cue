@@ -1,12 +1,13 @@
 defmodule LiveCue.Collection do
-  @collection_dir "/m/projects/live_cue/collection_subset"
   # @extensions ["flac", "mp3"]
   @extensions ["flac"]
   @starting_map [single: %{}, various: %{}]
 
   def store_collection_data() do
+    collection_directory = Application.fetch_env!(:live_cue, :collection_directory)
+
     collection_data =
-      @collection_dir
+      collection_directory
       |> process_dir()
       |> Enum.reduce(@starting_map, &restructure/2)
       |> Enum.map(&reorder_type/1)
@@ -72,9 +73,11 @@ defmodule LiveCue.Collection do
   end
 
   defp process_file(path) when is_binary(path) do
+    collection_directory = Application.fetch_env!(:live_cue, :collection_directory)
+
     with \
       true <- is_accepted_file_ext(path, @extensions),
-      relative_path <- String.trim_leading(path, @collection_dir <> "/"),
+      relative_path <- String.trim_leading(path, collection_directory <> "/"),
       meta <- read_file_meta(path)
     do
       Map.new()
