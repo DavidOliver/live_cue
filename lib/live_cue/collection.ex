@@ -12,6 +12,7 @@ defmodule LiveCue.Collection do
       |> Enum.map(&reorder/1)
       |> Enum.reduce([], &key_for_storage/2)
       |> List.flatten()
+      |> Enum.into(%{})
 
     index =
       files_processed
