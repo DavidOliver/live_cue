@@ -4,20 +4,27 @@ defmodule LiveCue.Collection do
   @starting_map [single: %{}, various: %{}]
 
   def store_collection_data() do
-    collection_directory = Application.fetch_env!(:live_cue, :collection_directory)
+    files_processed = process_dir(Application.fetch_env!(:live_cue, :collection_directory))
 
     collection_data =
-      collection_directory
-      |> process_dir()
-      |> Enum.reduce(@starting_map, &restructure/2)
-      |> Enum.map(&reorder_type/1)
+      files_processed
+      |> Enum.reduce(@starting_map, &restructure_with_tracks/2)
+      |> Enum.map(&reorder/1)
       |> Enum.reduce([], &key_for_storage/2)
       |> List.flatten()
 
-    CubDB.put_multi(LiveCue.DB, collection_data)
+    index =
+      files_processed
+      |> Enum.reduce(@starting_map, &restructure_for_index/2)
+      |> Enum.map(&reorder/1)
+
+    :ok = CubDB.put_multi(LiveCue.DB, collection_data)
+    :ok = CubDB.put(LiveCue.DB, :collection_index, index)
+
+    :ok
   end
 
-  defp reorder_type({:single, artists}) do
+  defp reorder({:single, artists}) do
     artists_sorted =
       artists
       |> Enum.sort_by(&(elem(&1, 0)))
@@ -26,7 +33,7 @@ defmodule LiveCue.Collection do
     {:single, artists_sorted}
   end
 
-  defp reorder_type({:various, albums}) do
+  defp reorder({:various, albums}) do
     albums_sorted =
       albums
       |> Enum.sort_by(&(&1 |> elem(1) |> Map.get(:date)))
@@ -127,7 +134,13 @@ defmodule LiveCue.Collection do
     Enum.reject(files_and_dirs, fn name -> String.starts_with?(name, ".") end)
   end
 
-  defp restructure(track, acc) do
+  defp restructure_for_index(track, acc) do
+    acc
+    |> add_artist(track)
+    |> add_album_meta(track)
+  end
+
+  defp restructure_with_tracks(track, acc) do
     acc
     |> add_artist(track)
     |> add_album_meta(track)
