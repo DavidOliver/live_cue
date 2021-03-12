@@ -25,47 +25,11 @@ defmodule LiveCue.Collection do
     :ok
   end
 
-  defp reorder({:single, artists}) do
-    artists_sorted =
-      artists
-      |> Enum.sort_by(&(elem(&1, 0)))
-      |> Enum.map(&sort_single_artist_albums/1)
-
-    {:single, artists_sorted}
-  end
-
-  defp reorder({:various, albums}) do
-    albums_sorted =
-      albums
-      |> Enum.sort_by(&(&1 |> elem(1) |> Map.get(:date)))
-      |> Enum.map(&sort_tracks/1)
-
-    {:various, albums_sorted}
-  end
-
-  defp sort_single_artist_albums({artist_name, artist_albums}) do
-    artist_albums_sorted =
-      artist_albums
-      |> Enum.sort_by(&{&1 |> elem(1) |> Map.get(:date), &1 |> elem(1) |> Map.get(:name)})
-      |> Enum.map(&sort_tracks/1)
-
-    {artist_name, artist_albums_sorted}
-  end
-
-  defp sort_tracks({album_name, album_info}) do
-    album_info_sorted =
-      album_info
-      |> get_and_update_in([:tracks], fn tracks -> {tracks, Enum.sort_by(tracks, &Map.get(&1, :track_number))} end)
-      |> elem(1)
-
-    {album_name, album_info_sorted}
-  end
-
   defp process_dir(dir) when is_binary(dir) do
     {:ok, files_and_dirs} = File.ls(dir)
 
     files_and_dirs
-    |> reject_hidden()
+    |> Enum.reject(&String.starts_with?(&1, "."))
     |> Enum.map(&process_file_or_dir(&1, dir))
     |> List.flatten()
   end
@@ -96,6 +60,12 @@ defmodule LiveCue.Collection do
     end
   end
 
+  defp is_accepted_file_ext(path, extensions) when is_binary(path) and is_list(extensions) do
+    path
+    |> file_ext()
+    |> Kernel.in(extensions)
+  end
+
   defp read_file_meta(path) when is_binary(path) do
     read_file_meta(path, file_ext(path))
   end
@@ -119,20 +89,10 @@ defmodule LiveCue.Collection do
     end
   end
 
-  defp is_accepted_file_ext(path, extensions) when is_binary(path) and is_list(extensions) do
-    path
-    |> file_ext()
-    |> Kernel.in(extensions)
-  end
-
   defp file_ext(path) when is_binary(path) do
     path
     |> String.split(".")
     |> List.last()
-  end
-
-  defp reject_hidden(files_and_dirs) when is_list(files_and_dirs) do
-    Enum.reject(files_and_dirs, fn name -> String.starts_with?(name, ".") end)
   end
 
   defp restructure_for_index(track, acc) do
@@ -235,6 +195,42 @@ defmodule LiveCue.Collection do
 
   defp tracks_key_path(track) do
     album_key_path(track) ++ [:tracks]
+  end
+
+  defp reorder({:single, artists}) do
+    artists_sorted =
+      artists
+      |> Enum.sort_by(&(elem(&1, 0)))
+      |> Enum.map(&sort_single_artist_albums/1)
+
+    {:single, artists_sorted}
+  end
+
+  defp reorder({:various, albums}) do
+    albums_sorted =
+      albums
+      |> Enum.sort_by(&(&1 |> elem(1) |> Map.get(:date)))
+      |> Enum.map(&sort_tracks/1)
+
+    {:various, albums_sorted}
+  end
+
+  defp sort_single_artist_albums({artist_name, artist_albums}) do
+    artist_albums_sorted =
+      artist_albums
+      |> Enum.sort_by(&{&1 |> elem(1) |> Map.get(:date), &1 |> elem(1) |> Map.get(:name)})
+      |> Enum.map(&sort_tracks/1)
+
+    {artist_name, artist_albums_sorted}
+  end
+
+  defp sort_tracks({album_name, album_info}) do
+    album_info_sorted =
+      album_info
+      |> get_and_update_in([:tracks], fn tracks -> {tracks, Enum.sort_by(tracks, &Map.get(&1, :track_number))} end)
+      |> elem(1)
+
+    {album_name, album_info_sorted}
   end
 
   defp key_for_storage(type, acc) do
