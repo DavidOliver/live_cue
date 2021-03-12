@@ -1,7 +1,11 @@
 defmodule LiveCue.Collection do
   # @extensions ["flac", "mp3"]
   @extensions ["flac"]
-  @starting_map [single: %{}, various: %{}]
+  @starting_map %{single: %{}, various: %{}}
+
+  def get_index() do
+    CubDB.get(LiveCue.DB, :collection_index, @starting_map)
+  end
 
   def store_collection_data() do
     files_processed = process_dir(Application.fetch_env!(:live_cue, :collection_directory))
@@ -18,6 +22,7 @@ defmodule LiveCue.Collection do
       files_processed
       |> Enum.reduce(@starting_map, &restructure_for_index/2)
       |> Enum.map(&reorder/1)
+      |> Enum.into(%{})
 
     :ok = CubDB.put_multi(LiveCue.DB, collection_data)
     :ok = CubDB.put(LiveCue.DB, :collection_index, index)

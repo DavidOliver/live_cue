@@ -1,0 +1,21 @@
+<section>
+	<h2>Collection</h2>
+
+	<%= for artist <- @index.single do %>
+		<h3><%= artist_map_name(artist) %></h3>
+		<ul>
+			<%= for album <- artist_map_albums(artist) do %>
+				<li><a href=""><%= album.title %></a></li>
+			<% end %>
+		</ul>
+	<% end %>
+
+	<h3>Various Artists</h3>
+
+	<ul>
+		<%= for album <- @index.various do %>
+			<li><a href=""><%= album.title %></a></li>
+		<% end %>
+	</ul>
+
+</section>

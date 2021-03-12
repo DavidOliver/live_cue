@@ -87,6 +87,7 @@ defmodule LiveCueWeb do
       # Import basic rendering functionality (render, render_layout, etc)
       import Phoenix.View
 
+      import LiveCueWeb.ViewHelpers
       import LiveCueWeb.ErrorHelpers
       import LiveCueWeb.Gettext
       alias LiveCueWeb.Router.Helpers, as: Routes
