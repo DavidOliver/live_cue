@@ -1,0 +1,9 @@
+<div id="<%= "album-#{@id}" %>" class="album-tracks">
+	<%= if @album[:tracks] do %>
+		<ul>
+			<%= for track <- @album.tracks do %>
+				<li><%= track[:title] %></li>
+			<% end %>
+		</ul>
+	<% end %>
+</div>

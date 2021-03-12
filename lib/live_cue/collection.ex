@@ -7,6 +7,16 @@ defmodule LiveCue.Collection do
     CubDB.get(LiveCue.DB, :collection_index, @starting_map)
   end
 
+  def get_album(type, id) when is_binary(type) and is_binary(id) do
+    type_key =
+      case type do
+        t when t in ["single", "various"] -> String.to_atom(t)
+        _ -> nil
+      end
+
+    CubDB.get(LiveCue.DB, {:collection, type_key, id})
+  end
+
   def store_collection_data() do
     files_processed = process_dir(Application.fetch_env!(:live_cue, :collection_directory))
 
@@ -136,7 +146,13 @@ defmodule LiveCue.Collection do
         true -> nil
         _ -> track[:albumartist] || track[:artist]
       end
+    hash_source = "#{artist} #{track[:album]} #{track[:date]} #{track[:genre]}"
+    hash =
+      :crypto.hash(:sha256, hash_source)
+      |> Base.encode16()
+      |> String.downcase()
     album_info = %{
+      id: hash,
       title: track[:album],
       artist: artist,
       date: track[:date],
@@ -242,13 +258,13 @@ defmodule LiveCue.Collection do
     case elem(type, 0) do
       :various ->
         for album <- elem(type, 1) do
-          album_key = {:collection, :various, album.title}
+          album_key = {:collection, :various, album.id}
           acc ++ [{album_key, album}]
         end
       :single ->
         for artist <- elem(type, 1) do
           for album <- artist |> Map.to_list() |> List.first() |> elem(1) do
-            album_key = {:collection, :single, album.artist, album.title}
+            album_key = {:collection, :single, album.id}
             acc ++ [{album_key, album}]
           end
         end
