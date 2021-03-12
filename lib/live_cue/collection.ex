@@ -221,32 +221,30 @@ defmodule LiveCue.Collection do
       |> Enum.sort_by(&{&1 |> elem(1) |> Map.get(:date), &1 |> elem(1) |> Map.get(:name)})
       |> Enum.map(&sort_tracks/1)
 
-    {artist_name, artist_albums_sorted}
+    %{artist_name => artist_albums_sorted}
   end
 
-  defp sort_tracks({album_name, album_info}) do
+  defp sort_tracks({_album_name, album_info}) do
     album_info_sorted =
       album_info
       |> get_and_update_in([:tracks], fn tracks -> {tracks, Enum.sort_by(tracks, &Map.get(&1, :track_number))} end)
       |> elem(1)
 
-    {album_name, album_info_sorted}
+    album_info_sorted
   end
 
   defp key_for_storage(type, acc) do
-    # @TODO: improve comprehensions?
-    # @TODO: use x_key functions?
     case elem(type, 0) do
       :various ->
         for album <- elem(type, 1) do
-          album_key = {:collection, :various, elem(album, 0)}
-          acc ++ [{album_key, elem(album, 1)}]
+          album_key = {:collection, :various, album.title}
+          acc ++ [{album_key, album}]
         end
       :single ->
         for artist <- elem(type, 1) do
-          for album <- elem(artist, 1) do
-            album_key = {:collection, :single, elem(artist, 0), elem(album, 0)}
-            acc ++ [{album_key, elem(album, 1)}]
+          for album <- artist |> Map.to_list() |> List.first() |> elem(1) do
+            album_key = {:collection, :single, album.artist, album.title}
+            acc ++ [{album_key, album}]
           end
         end
     end
