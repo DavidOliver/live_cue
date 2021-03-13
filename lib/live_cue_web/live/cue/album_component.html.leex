@@ -2,7 +2,11 @@
 	<%= if @album[:tracks] do %>
 		<ul>
 			<%= for track <- @album.tracks do %>
-				<li><%= track[:title] %></li>
+				<li class="track">
+					<span class="track-number"><%= track[:number] %>.</span>
+					<span class="track-title"><%= track[:title] %></span>
+					<span class="track-artist">(<%= track[:artist] %>)</span>
+				</li>
 			<% end %>
 		</ul>
 	<% end %>

@@ -6,19 +6,17 @@
 		<ul>
 			<%= for album <- artist_map_albums(artist) do %>
 				<li>
-					<%= link(album.title, [
-						to: "#",
-						class: "album-title",
-						"phx-click": "expand",
-						"phx-target": "#album-#{album.id}",
-						"phx-value-type": "single",
-						"phx-value-id": album.id,
-					]) %>
+					<%= link [to: "#", class: "album-title",
+						"phx-click": "expand", "phx-target": "#album-#{album.id}",
+						"phx-value-type": "single", "phx-value-id": album.id
+					] do %>
+						<%= album.title %>
+						<span class="album-meta">
+							(<%= album.date %> <%= album.genre %>)
+						</span>
+					<% end %>
 					<%= live_component @socket, AlbumComponent, [
-						id: album.id,
-						type: :single,
-						album_title: album.title,
-						album: nil,
+						id: album.id, type: :single, album_title: album.title, album: nil
 					] %>
 				</li>
 			<% end %>
@@ -30,19 +28,17 @@
 	<ul>
 		<%= for album <- @index.various do %>
 			<li>
-				<%= link(album.title, [
-					to: "#",
-					class: "album-title",
-					"phx-click": "expand",
-					"phx-target": "#album-#{album.id}",
-					"phx-value-type": "various",
-					"phx-value-id": album.id,
-				]) %>
+				<%= link [to: "#", class: "album-title",
+					"phx-click": "expand", "phx-target": "#album-#{album.id}",
+					"phx-value-type": "various", "phx-value-id": album.id
+				] do %>
+					<%= album.title %>
+					<span class="album-meta">
+						(<%= album.date %> <%= album.genre %>)
+					</span>
+				<% end %>
 				<%= live_component @socket, AlbumComponent, [
-					id: album.id,
-					type: :various,
-					album_title: album.title,
-					album: nil,
+					id: album.id, type: :various, album_title: album.title, album: nil
 				] %>
 			</li>
 		<% end %>
