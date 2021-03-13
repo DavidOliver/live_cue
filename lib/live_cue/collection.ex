@@ -176,7 +176,7 @@ defmodule LiveCue.Collection do
       |> String.to_integer()
     track_info = %{
       artist: track[:artist],
-      track_number: track_number,
+      number: track_number,
       title: track[:title],
       date: track[:date],
       genre: track[:genre],
@@ -248,7 +248,7 @@ defmodule LiveCue.Collection do
   defp sort_tracks({_album_name, album_info}) do
     album_info_sorted =
       album_info
-      |> get_and_update_in([:tracks], fn tracks -> {tracks, Enum.sort_by(tracks, &Map.get(&1, :track_number))} end)
+      |> get_and_update_in([:tracks], fn tracks -> {tracks, Enum.sort_by(tracks, &Map.get(&1, :number))} end)
       |> elem(1)
 
     album_info_sorted
