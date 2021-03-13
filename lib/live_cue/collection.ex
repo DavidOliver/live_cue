@@ -161,11 +161,7 @@ defmodule LiveCue.Collection do
     }
     keys = album_key_path(track)
 
-    if !get_in(acc, keys) do
-      put_in(acc, keys, album_info)
-    else
-      acc
-    end
+    if !get_in(acc, keys), do: put_in(acc, keys, album_info), else: acc
   end
 
   defp add_track(acc, track) do
