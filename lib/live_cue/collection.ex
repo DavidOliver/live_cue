@@ -41,6 +41,8 @@ defmodule LiveCue.Collection do
   end
 
   defp process_dir(dir) when is_binary(dir) do
+    IO.puts "Processing #{dir}"
+
     {:ok, files_and_dirs} = File.ls(dir)
 
     files_and_dirs
