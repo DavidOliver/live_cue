@@ -6,6 +6,12 @@
 					<span class="track-number"><%= track[:number] %>.</span>
 					<span class="track-title"><%= track[:title] %></span>
 					<span class="track-artist">(<%= track[:artist] %>)</span>
+					<%= link "▶", [to: "#", class: "button-play",
+						"phx-click": "play",
+						"phx-value-album-id": @album.id,
+						"phx-value-album-type": @album.type,
+						"phx-value-track-number": track[:number]
+					] %>
 				</li>
 			<% end %>
 		</ul>

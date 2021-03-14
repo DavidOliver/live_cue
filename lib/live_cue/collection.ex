@@ -148,12 +148,18 @@ defmodule LiveCue.Collection do
         true -> nil
         _ -> track[:albumartist] || track[:artist]
       end
+    type =
+      case album_is_various_artists(track) do
+        true -> "various"
+        _ -> "single"
+      end
     hash_source = "#{artist} #{track[:album]} #{track[:date]} #{track[:genre]}"
     hash =
       :crypto.hash(:sha256, hash_source)
       |> Base.encode16()
       |> String.downcase()
     album_info = %{
+      type: type,
       id: hash,
       title: track[:album],
       artist: artist,
