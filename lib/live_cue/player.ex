@@ -1,21 +1,50 @@
 defmodule LiveCue.Player do
   alias LiveCue.Collection
 
-  def play_track(%{album_id: album_id, album_type: album_type, track_number: track_number}) do
-    collection_directory = Application.fetch_env!(:live_cue, :collection_directory)
-    track =
+  def play_album(%{album_type: album_type, album_id: album_id}) do
+    album_relative_path =
+      Collection.get_album(album_type, album_id)
+      |> Map.get(:tracks)
+      |> List.first()
+      |> Map.get(:relative_path)
+      |> String.reverse()
+      |> String.split("/", [parts: 2])
+      |> List.last()
+      |> String.reverse()
+
+    :ok = play(album_relative_path)
+  end
+
+  def play_track(%{album_type: album_type, album_id: album_id, track_number: track_number}) do
+    track_relative_path =
       Collection.get_album(album_type, album_id)
       |> Map.get(:tracks)
       |> Enum.find(&(&1.number == track_number))
+      |> Map.get(:relative_path)
 
-    track_path = Path.join(collection_directory, Map.get(track, :relative_path))
+    :ok = play(track_relative_path)
+  end
 
-    System.cmd("cmus-remote", ["--stop"])
-    System.cmd("cmus-remote", ["--clear", "--queue"])
-    System.cmd("cmus-remote", ["--queue", track_path])
-    System.cmd("cmus-remote", ["--next"])
-    System.cmd("cmus-remote", ["--play"])
+  defp play(relative_path) when is_binary(relative_path) do
+    absolute_path =
+      Application.fetch_env!(:live_cue, :collection_directory)
+      |> Path.join(relative_path)
+    commands = [
+      ["--stop"],
+      ["--clear", "--queue"],
+      ["--queue", absolute_path],
+      ["--next"],
+      ["--play"]
+    ]
 
-    {:ok, Map.get(track, :title)}
+    :ok = cmus_remote(commands)
+  end
+
+  defp cmus_remote(commands) when is_list(commands) do
+    Enum.each(commands, fn cmd_args ->
+      {_, 0} = System.cmd("cmus-remote", cmd_args)
+    end)
+
+    :ok
   end
 end

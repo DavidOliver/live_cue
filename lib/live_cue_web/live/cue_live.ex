@@ -26,13 +26,24 @@ defmodule LiveCueWeb.CueLive do
   end
 
   @impl true
-  def handle_event("play", %{"album-id" => album_id, "album-type" => album_type, "track-number" => track_number}, socket) do
+  def handle_event("play_album", %{"album-type" => album_type, "album-id" => album_id}, socket) do
+    payload = %{
+      album_id: album_id,
+      album_type: album_type
+    }
+    Endpoint.broadcast("player", "album_play_request", payload)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("play_track", %{"album-type" => album_type, "album-id" => album_id, "track-number" => track_number}, socket) do
     payload = %{
       album_id: album_id,
       album_type: album_type,
       track_number: String.to_integer(track_number)
     }
-    Endpoint.broadcast("player", "start_playing_track", payload)
+    Endpoint.broadcast("player", "track_play_request", payload)
 
     {:noreply, socket}
   end
@@ -52,9 +63,16 @@ defmodule LiveCueWeb.CueLive do
   end
 
   @impl true
-  def handle_info(%{topic: "player", event: "start_playing_track", payload: payload}, socket) do
-    {:ok, title} = Player.play_track(payload)
+  def handle_info(%{topic: "player", event: "album_play_request", payload: payload}, socket) do
+    Player.play_album(payload)
 
-    {:noreply, assign(socket, :track_started_playing, title)}
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(%{topic: "player", event: "track_play_request", payload: payload}, socket) do
+    Player.play_track(payload)
+
+    {:noreply, socket}
   end
 end

@@ -26,6 +26,11 @@
 							(<%= album.date %> <%= album.genre %>)
 						</span>
 					<% end %>
+					<%= link "▶", [to: "#", class: "button-play",
+						"phx-click": "play_album",
+						"phx-value-album-id": album.id,
+						"phx-value-album-type": album.type
+					] %>
 					<%= live_component @socket, AlbumComponent, [
 						id: album.id, type: :single, album_title: album.title, album: nil
 					] %>
@@ -48,6 +53,11 @@
 						(<%= album.date %> <%= album.genre %>)
 					</span>
 				<% end %>
+				<%= link "▶", [to: "#", class: "button-play",
+					"phx-click": "play_album",
+					"phx-value-album-id": album.id,
+					"phx-value-album-type": album.type
+				] %>
 				<%= live_component @socket, AlbumComponent, [
 					id: album.id, type: :various, album_title: album.title, album: nil
 				] %>
