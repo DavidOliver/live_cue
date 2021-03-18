@@ -66,28 +66,28 @@ defmodule LiveCueWeb.CueLive do
 
   @impl true
   def handle_info(%{topic: "player", event: "request_album_play", payload: payload}, socket) do
-    Player.play_album(payload)
+    Task.start(Player, :play_album, [payload])
 
     {:noreply, socket}
   end
 
   @impl true
   def handle_info(%{topic: "player", event: "request_track_play", payload: payload}, socket) do
-    Player.play_track(payload)
+    Task.start(Player, :play_track, [payload])
 
     {:noreply, socket}
   end
 
   @impl true
   def handle_info(%{topic: "player", event: "request_stop"}, socket) do
-    Player.stop()
+    Task.start(Player, :stop, [])
 
     {:noreply, socket}
   end
 
   @impl true
   def handle_info(%{topic: "player", event: "request_pause_resume"}, socket) do
-    Player.pause_resume()
+    Task.start(Player, :pause_resume, [])
 
     {:noreply, socket}
   end
