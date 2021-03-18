@@ -10,11 +10,11 @@ defmodule LiveCueWeb.CueLive do
     end
 
     index = Collection.get_index()
-
     socket =
       socket
       |> assign(:index, index)
       |> assign(:track_started_playing, nil)
+
     {:ok, socket}
   end
 
@@ -31,7 +31,8 @@ defmodule LiveCueWeb.CueLive do
       album_id: album_id,
       album_type: album_type
     }
-    Endpoint.broadcast("player", "album_play_request", payload)
+
+    Endpoint.broadcast("player", "request_album_play", payload)
 
     {:noreply, socket}
   end
@@ -43,7 +44,8 @@ defmodule LiveCueWeb.CueLive do
       album_type: album_type,
       track_number: String.to_integer(track_number)
     }
-    Endpoint.broadcast("player", "track_play_request", payload)
+
+    Endpoint.broadcast("player", "request_track_play", payload)
 
     {:noreply, socket}
   end
@@ -63,14 +65,14 @@ defmodule LiveCueWeb.CueLive do
   end
 
   @impl true
-  def handle_info(%{topic: "player", event: "album_play_request", payload: payload}, socket) do
+  def handle_info(%{topic: "player", event: "request_album_play", payload: payload}, socket) do
     Player.play_album(payload)
 
     {:noreply, socket}
   end
 
   @impl true
-  def handle_info(%{topic: "player", event: "track_play_request", payload: payload}, socket) do
+  def handle_info(%{topic: "player", event: "request_track_play", payload: payload}, socket) do
     Player.play_track(payload)
 
     {:noreply, socket}
