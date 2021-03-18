@@ -1,5 +1,9 @@
 # LiveCue
 
+## Audio file format support
+
+FLAC is supported. mp3 and m4a support is in progress.
+
 ## Setup
 
 These instructions are for Ubuntu 20.04.

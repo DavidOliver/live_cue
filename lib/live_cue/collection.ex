@@ -1,5 +1,5 @@
 defmodule LiveCue.Collection do
-  # @extensions ["flac", "mp3"]
+  # @extensions ["flac", "mp3", "m4a",]
   @extensions ["flac"]
   @starting_map %{single: %{}, various: %{}}
 
