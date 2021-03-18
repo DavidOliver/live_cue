@@ -25,6 +25,10 @@ defmodule LiveCue.Player do
     :ok = play(track_relative_path)
   end
 
+  def stop(), do: :ok = cmus_remote([["--stop"]])
+
+  def pause_resume(), do: :ok = cmus_remote([["--pause"]])
+
   defp play(relative_path) when is_binary(relative_path) do
     absolute_path =
       Application.fetch_env!(:live_cue, :collection_directory)

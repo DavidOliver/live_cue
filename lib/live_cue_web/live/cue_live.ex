@@ -50,14 +50,14 @@ defmodule LiveCueWeb.CueLive do
 
   @impl true
   def handle_event("stop", _params, socket) do
-    System.cmd("cmus-remote", ["--stop"])
+    Endpoint.broadcast("player", "request_stop", nil)
 
     {:noreply, socket}
   end
 
   @impl true
   def handle_event("pause_resume", _params, socket) do
-    System.cmd("cmus-remote", ["--pause"])
+    Endpoint.broadcast("player", "request_pause_resume", nil)
 
     {:noreply, socket}
   end
@@ -72,6 +72,20 @@ defmodule LiveCueWeb.CueLive do
   @impl true
   def handle_info(%{topic: "player", event: "track_play_request", payload: payload}, socket) do
     Player.play_track(payload)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(%{topic: "player", event: "request_stop"}, socket) do
+    Player.stop()
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(%{topic: "player", event: "request_pause_resume"}, socket) do
+    Player.pause_resume()
 
     {:noreply, socket}
   end
