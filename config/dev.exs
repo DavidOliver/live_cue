@@ -2,10 +2,6 @@ import Config
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
-#
-# The watchers configuration can be used to run external
-# watchers to your application. For example, we use it
-# with webpack to recompile .js and .css sources.
 config :live_cue, LiveCueWeb.Endpoint,
   http: [port: String.to_integer(System.get_env("PORT") || "4000")],
   debug_errors: true,
@@ -13,10 +9,9 @@ config :live_cue, LiveCueWeb.Endpoint,
   check_origin: false,
   watchers: [
     node: [
-      "node_modules/webpack/bin/webpack.js",
-      "--mode",
-      "development",
-      "--watch-stdin",
+      "node_modules/.bin/snowpack",
+      "build",
+      "--watch",
       cd: Path.expand("../assets", __DIR__)
     ]
   ]

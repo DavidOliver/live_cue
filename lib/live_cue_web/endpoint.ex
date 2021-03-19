@@ -24,7 +24,7 @@ defmodule LiveCueWeb.Endpoint do
     at: "/",
     from: :live_cue,
     gzip: false,
-    only: ~w(css fonts images js favicon.ico robots.txt)
+    only: ~w(css fonts images js _snowpack favicon.ico robots.txt)
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
