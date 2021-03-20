@@ -8,7 +8,7 @@ defmodule LiveCue.DB do
         db_directory,
         [
           auto_file_sync: true,
-          auto_compact: true,
+          auto_compact: false,
           name: __MODULE__,
         ]
       ]}
