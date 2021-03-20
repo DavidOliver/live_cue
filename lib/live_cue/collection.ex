@@ -1,7 +1,10 @@
 defmodule LiveCue.Collection do
+  @starting_map %{single: %{}, various: %{}}
   # @extensions ["flac", "mp3", "m4a",]
   @extensions ["flac"]
-  @starting_map %{single: %{}, various: %{}}
+  @flac %{
+    read_bytes: 1024 * 512,
+  }
 
   def get_index() do
     CubDB.get(LiveCue.DB, :collection_index, @starting_map)
@@ -17,11 +20,31 @@ defmodule LiveCue.Collection do
     CubDB.get(LiveCue.DB, {:collection, type_key, id})
   end
 
-  def store_collection_data() do
-    files_processed = process_dir(Application.fetch_env!(:live_cue, :collection_directory))
+  def process_collection() do
+    :ok = parse_collection_files()
+    :ok = store_collection_data()
 
+    :ok
+  end
+
+  def parse_collection_files() do
+    files_parsed = process_dir(Application.fetch_env!(:live_cue, :collection_directory))
+
+    :ok = CubDB.put(LiveCue.DB, :collection_files_parsed, files_parsed)
+  end
+
+  def store_collection_data() do
+    case CubDB.get(LiveCue.DB, :collection_files_parsed, nil) do
+      x when is_list(x) ->
+        store_collection_data(x)
+      _ ->
+        raise "No file data"
+    end
+  end
+
+  defp store_collection_data(files_parsed) when is_list(files_parsed) do
     collection_data =
-      files_processed
+      files_parsed
       |> Enum.reduce(@starting_map, &restructure_with_tracks/2)
       |> Enum.map(&reorder/1)
       |> Enum.reduce([], &key_for_storage/2)
@@ -29,7 +52,7 @@ defmodule LiveCue.Collection do
       |> Enum.into(%{})
 
     index =
-      files_processed
+      files_parsed
       |> Enum.reduce(@starting_map, &restructure_for_index/2)
       |> Enum.map(&reorder/1)
       |> Enum.into(%{})
@@ -41,12 +64,13 @@ defmodule LiveCue.Collection do
   end
 
   defp process_dir(dir) when is_binary(dir) do
-    IO.puts "Processing #{dir}"
+    IO.puts "Processing: #{trim_collection_base_dir(dir)}"
 
     {:ok, files_and_dirs} = File.ls(dir)
 
     files_and_dirs
     |> Enum.reject(&String.starts_with?(&1, "."))
+    |> Enum.sort_by(&(&1))
     |> Enum.map(&process_file_or_dir(&1, dir))
     |> List.flatten()
   end
@@ -62,19 +86,31 @@ defmodule LiveCue.Collection do
   end
 
   defp process_file(path) when is_binary(path) do
-    collection_directory = Application.fetch_env!(:live_cue, :collection_directory)
-
     with \
       true <- is_accepted_file_ext(path, @extensions),
-      relative_path <- String.trim_leading(path, collection_directory <> "/"),
-      meta <- read_file_meta(path)
+      relative_path <- trim_collection_base_dir(path),
+      {:ok, meta} <- read_file_meta(path)
     do
       Map.new()
       |> Map.put(:relative_path, relative_path)
       |> Map.merge(meta)
     else
-      _ -> []
+      {:error, reason} ->
+        IO.puts "PARSING ERROR: #{trim_collection_base_dir(path)}:"
+        IO.inspect reason
+      x ->
+        if is_accepted_file_ext(path, @extensions) do
+          IO.puts "PARSING FAILURE: #{trim_collection_base_dir(path)}:"
+          IO.inspect x
+        end
+        []
     end
+  end
+
+  defp trim_collection_base_dir(path) when is_binary(path) do
+    collection_directory = Application.fetch_env!(:live_cue, :collection_directory)
+
+    String.trim_leading(path, collection_directory <> "/")
   end
 
   defp is_accepted_file_ext(path, extensions) when is_binary(path) and is_list(extensions) do
@@ -86,31 +122,79 @@ defmodule LiveCue.Collection do
   defp read_file_meta(path) when is_binary(path) do
     read_file_meta(path, file_ext(path))
   end
-  defp read_file_meta(path, "flac") do
-    case FlacParser.parse(path) do
-      {:ok, meta} ->
-        meta
-      {:error, _reason} ->
-        # @TODO: Log issue
-        nil
-    end
-  end
-  defp read_file_meta(path, "mp3") when is_binary(path) do
-    case File.read(path) do
-      {:ok, file_content} ->
-        # @TODO: deal with ID3v2 failure
-        ID3v2.frames(file_content)
-      {:error, _reason} ->
-        # @TODO: Log issue
-        nil
-    end
-  end
+  defp read_file_meta(path, "flac") when is_binary(path) do
+    relative_path = trim_collection_base_dir(path)
 
-  defp file_ext(path) when is_binary(path) do
-    path
-    |> String.split(".")
-    |> List.last()
+    {:ok, file} = :file.open(path, [:read, :binary])
+    {:ok, data} = :file.read(file, @flac.read_bytes)
+    :file.close(file)
+
+    try do
+      parse_flac(data, relative_path)
+    rescue
+      _ ->
+        case File.read(path) do
+          {:ok, data} -> parse_flac(data, relative_path)
+          x -> x
+        end
+    end
   end
+  defp parse_flac(data, relative_path) do
+    case FlacParser.parse(data) do
+      {:ok, meta} ->
+        clean_meta =
+          meta
+          |> clean_album(relative_path)
+          |> clean_track_number(relative_path)
+        {:ok, clean_meta}
+      {:error, _reason} ->
+        # @TODO: Log issue
+        nil
+    end
+  end
+  defp clean_album(meta, relative_path) do
+    Map.update(meta, :album, "", fn existing ->
+      case existing do
+        a when is_list(a) ->
+          IO.puts "MULTIPLE ALBUM TAGS (joining with ' - '): #{relative_path}"
+          Enum.join(a, " - ")
+        a when is_binary(a) ->
+          a
+        _ ->
+          IO.puts "INVALID ALBUM TAG DATA (defaulting to ''): #{relative_path}"
+          ""
+      end
+    end)
+  end
+  defp clean_track_number(meta, relative_path) do
+    Map.update(meta, :tracknumber, nil, fn existing ->
+      case existing do
+        "" ->
+          IO.puts "MISSING TRACK NUMBER (deriving from filename): #{relative_path}"
+          relative_path |> String.split("/") |> List.last() |> String.split(";") |> List.first() |> String.to_integer()
+        t when is_binary(t) ->
+          t |> String.split("/") |> List.first() |> String.to_integer()
+        t ->
+          IO.puts "UNEXPECTED TRACK NUMBER: #{relative_path}"
+          IO.inspect t
+          nil
+      end
+    end)
+  end
+  # defp read_file_meta(path, "mp3") when is_binary(path) do
+  #   case File.read(path) do
+  #     {:ok, file_content} ->
+  #       # @TODO: deal with ID3v2 failure
+  #       ID3v2.frames(file_content)
+  #     {:error, _reason} ->
+  #       # @TODO: Log issue
+  #       nil
+  #   end
+  # end
+  # defp read_file_meta(path, "m4a") when is_binary(path) do
+  # end
+
+  defp file_ext(path) when is_binary(path), do: path |> String.split(".") |> List.last()
 
   defp restructure_for_index(track, acc) do
     acc
@@ -132,6 +216,7 @@ defmodule LiveCue.Collection do
       true ->
         case Kernel.get_in(acc, artist_key_path(track)) do
           nil ->
+            # IO.inspect(track, [label: "Adding artist"])
             Kernel.update_in(acc, [artist_key_prefix(track)], fn x ->
               Map.put_new(x, artist_key(track), %{})
             end)
@@ -142,6 +227,7 @@ defmodule LiveCue.Collection do
   end
 
   defp add_album_meta(acc, track) do
+    # IO.inspect(track, [label: "Adding album meta"])
     # @TODO: set meta based on all album’s tracks rather than album’s first track?
     artist =
       case album_is_various_artists(track) do
@@ -173,14 +259,9 @@ defmodule LiveCue.Collection do
   end
 
   defp add_track(acc, track) do
-    track_number =
-      track[:tracknumber]
-      |> String.split("/")
-      |> List.first()
-      |> String.to_integer()
     track_info = %{
       artist: track[:artist],
-      number: track_number,
+      number: track[:tracknumber],
       title: track[:title],
       date: track[:date],
       genre: track[:genre],
@@ -192,9 +273,7 @@ defmodule LiveCue.Collection do
     end)
   end
 
-  defp album_is_various_artists(track) do
-    String.starts_with?(track.relative_path, "Various/")
-  end
+  defp album_is_various_artists(track), do: String.starts_with?(track.relative_path, "Various/")
 
   defp artist_key_prefix(track) do
     cond do
@@ -215,7 +294,18 @@ defmodule LiveCue.Collection do
   end
 
   defp album_key_path(track) do
-    artist_key_path(track) ++ [track[:album]] |> List.flatten()
+    album_key =
+      case track[:album] do
+        k when is_list(k) ->
+          IO.puts "#{track.relative_path}: multiple album tags; joining with ' - '"
+          Enum.join(k, " - ")
+        k when is_binary(k) ->
+          k
+        _ ->
+          []
+      end
+
+    artist_key_path(track) ++ [album_key] |> List.flatten()
   end
 
   defp tracks_key_path(track) do
@@ -250,12 +340,9 @@ defmodule LiveCue.Collection do
   end
 
   defp sort_tracks({_album_name, album_info}) do
-    album_info_sorted =
-      album_info
-      |> get_and_update_in([:tracks], fn tracks -> {tracks, Enum.sort_by(tracks, &Map.get(&1, :number))} end)
-      |> elem(1)
-
-    album_info_sorted
+    album_info
+    |> get_and_update_in([:tracks], fn tracks -> {tracks, Enum.sort_by(tracks, &Map.get(&1, :number))} end)
+    |> elem(1)
   end
 
   defp key_for_storage(type, acc) do
@@ -263,13 +350,13 @@ defmodule LiveCue.Collection do
       :various ->
         for album <- elem(type, 1) do
           album_key = {:collection, :various, album.id}
-          acc ++ [{album_key, album}]
+          [{album_key, album}] ++ acc
         end
       :single ->
         for artist <- elem(type, 1) do
           for album <- artist |> Map.to_list() |> List.first() |> elem(1) do
             album_key = {:collection, :single, album.id}
-            acc ++ [{album_key, album}]
+            [{album_key, album}] ++ acc
           end
         end
     end

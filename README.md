@@ -97,6 +97,35 @@ Visit [`localhost:4000`](http://localhost:4000) in your web browser.
 
 To stop the app, press Ctrl+C twice.
 
+## Parsing collection and storing data
+
+Processing collection files into data for use by LiveCue is done in two main steps.
+
+### 1. Parsing collection files
+
+In this step, we obtain basic file and meta data from the collections files, and store the result in the local database.
+
+```
+iex> LiveCue.parse_collection_files()
+```
+
+### 2. Processing parsed data
+
+In this step, we transform and apply keys for storage to the data generated in step 1, and store the result in the local database. The data generated in this step is read when the LiveCue browser-based interface is used.
+
+```
+iex> LiveCue.store_collection_data()
+```
+
+As this step uses the data stored by step 1, the code for step 2 can be updated and re-run during development without having to re-parse the collection files.
+
+### Performing both steps with one command
+
+```
+iex> LiveCue.process_collection()
+```
+
+
 ## Learn about Phoenix
 
   * Official website: https://www.phoenixframework.org/

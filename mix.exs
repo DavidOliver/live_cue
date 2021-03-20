@@ -44,7 +44,7 @@ defmodule LiveCue.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:flac_parser, git: "https://github.com/DavidOliver/flac_parser", ref: "patch-1"},
+      {:flac_parser, git: "https://github.com/DavidOliver/flac_parser", ref: "5b5f60d2a714177a9e27cf1f7c113b7d83b9a09d"},
       {:id3v2, "~> 0.1.2"},
       {:cubdb, "~> 1.0.0-rc.8"},
     ]
