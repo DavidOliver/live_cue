@@ -33,15 +33,13 @@ defmodule LiveCue.Player do
     absolute_path =
       Application.fetch_env!(:live_cue, :collection_directory)
       |> Path.join(relative_path)
-    commands = [
-      ["--stop"],
-      ["--clear", "--queue"],
-      ["--queue", absolute_path],
-      ["--next"],
-      ["--play"]
-    ]
 
-    :ok = cmus_remote(commands)
+    :ok = cmus_remote([["--stop"], ["--clear"], [absolute_path]])
+
+    # Give cmus some time to add track(s) to its playlist
+    Process.sleep(100)
+
+    :ok = cmus_remote([["--next"], ["--play"]])
   end
 
   defp cmus_remote(commands) when is_list(commands) do
