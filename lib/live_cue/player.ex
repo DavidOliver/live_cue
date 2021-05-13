@@ -37,7 +37,7 @@ defmodule LiveCue.Player do
     :ok = cmus_remote([["--stop"], ["--clear"], [absolute_path]])
 
     # Give cmus some time to add track(s) to its playlist
-    Process.sleep(100)
+    Process.sleep(500)
 
     :ok = cmus_remote([["--next"], ["--play"]])
   end
