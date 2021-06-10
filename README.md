@@ -1,12 +1,14 @@
 # LiveCue
 
+A Phoenix LiveView-powered shared-file music collection player, for listening in sync with friends.
+
 ## Audio file format support
 
-FLAC is supported. mp3 and m4a support is in progress.
+FLAC. (mp3 and m4a support is in progress.)
 
 ## Setup
 
-These instructions are for Ubuntu 20.04.
+These instructions are for Debian/Ubuntu.
 
 ### 1. Install cmus
 
@@ -37,7 +39,7 @@ These instructions are for Ubuntu 20.04.
 	$ asdf install elixir 1.11.3-otp-23
 	```
 
-5. Install innotify filesystem-watcher Linux interface
+5. Install inotify filesystem-watcher Linux interface:
 
 	```
 	$ sudo apt install inotify-tools
@@ -48,12 +50,12 @@ These instructions are for Ubuntu 20.04.
 1. Clone repository:
 
 	```
-	$ git clone git@bitbucket.org:theoliverbros/live_cue.git [<destination>]`
+	$ git clone git@bitbucket.org:theoliverbros/live_cue.git [<destination>]
 	```
 
-2. `cd` to the new project repo directory. (All subsequent commands should be executed from this directory.)
+2. `cd` to the repo directory.
 
-3. In the `config` directory, copy `dev.secret.exs.example` to `dev.secret.exs`, and populate all values in the new config file.
+3. Copy `config/dev.secret.exs.example` to `config/dev.secret.exs`, and populate all values in the new config file.
 
 4. Install Elixir dependencies:
 
@@ -61,19 +63,19 @@ These instructions are for Ubuntu 20.04.
 	$ mix deps.get
 	```
 
-	Answer yes to questions on installing Rebar and/or Hex.
+	Answer yes to any subsequent questions on installing Rebar and/or Hex.
 
 ### 4. Install frontend-related dependencies
 
 1. [Install Node](https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions). (14 LTS recommended.)
 
-2. Install project JavaScript dependencies. In the project directory:
+2. Install project JavaScript dependencies:
 
 	```
 	$ npm install --prefix assets
 	```
 
-## Run for development
+## Run
 
 1. In a separate terminal, run cmus:
 
@@ -81,21 +83,47 @@ These instructions are for Ubuntu 20.04.
 	$ cmus
 	```
 
-2. Start LiveCue:
+2. In the original terminal, start LiveCue:
 
 	```
-	$ iex --name <node name> --cookie <pre-shared secret cookie> -S mix phx.server
+	$ iex --name <node name> --cookie <pre-shared secret> -S mix phx.server
 	```
 
 	For example:
 
 	```
-	$ iex --name ian --cookie dh30dh2ogiusd8jdujdfisw -S mix phx.server
+	$ iex --name ian --cookie m0nk3y -S mix phx.server
+	```
+
+3. Parse and process local music collection files:
+
+	```
+	iex> LiveCue.process_collection()
+	```
+
+	This step is only required on the first run and after music collection updates.
+
+4. Connect to the shared network
+
+	For example, ZeroTier.
+
+5. Connect to your friend’s LiveCue node:
+
+	```
+	iex> Node.connect(:<node name>)
+	```
+
+	For example:
+
+	```
+	iex> Node.connect(:david@doliver)
 	```
 
 Visit [`localhost:4000`](http://localhost:4000) in your web browser.
 
-To stop the app, press Ctrl+C twice.
+Select an album or track and hit play! Play, pause and stop actions should take effect on both your player and that of your friend’s.
+
+To stop the app, press Ctrl+C twice in the LiveCue iex terminal.
 
 ## Parsing collection and storing data
 
@@ -103,7 +131,9 @@ Processing collection files into data for use by LiveCue is done in two main ste
 
 ### 1. Parsing collection files
 
-In this step, we obtain basic file and meta data from the collections files, and store the result in the local database.
+In this step, we obtain basic file and meta data from the music collection’s files, and store the result in the local database.
+
+This step can be individually run in the Elixir interactive terminal:
 
 ```
 iex> LiveCue.parse_collection_files()
@@ -113,23 +143,10 @@ iex> LiveCue.parse_collection_files()
 
 In this step, we transform and apply keys for storage to the data generated in step 1, and store the result in the local database. The data generated in this step is read when the LiveCue browser-based interface is used.
 
+This step can be individually run in the Elixir interactive terminal:
+
 ```
 iex> LiveCue.store_collection_data()
 ```
 
-As this step uses the data stored by step 1, the code for step 2 can be updated and re-run during development without having to re-parse the collection files.
-
-### Performing both steps with one command
-
-```
-iex> LiveCue.process_collection()
-```
-
-
-## Learn about Phoenix
-
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+As this step uses the data stored by step 1, the code for step 2 can be updated and re-run during development without having to re-parse the collection files, which is a relatively lengthy process.
