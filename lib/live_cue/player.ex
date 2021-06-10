@@ -31,7 +31,8 @@ defmodule LiveCue.Player do
 
   defp play(relative_path) when is_binary(relative_path) do
     absolute_path =
-      Application.fetch_env!(:live_cue, :collection_directory)
+      :live_cue
+      |> Application.fetch_env!(:collection_directory)
       |> Path.join(relative_path)
 
     :ok = cmus_remote([
