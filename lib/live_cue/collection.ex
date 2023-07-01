@@ -345,20 +345,17 @@ defmodule LiveCue.Collection do
     |> elem(1)
   end
 
-  defp key_for_storage(type, acc) do
-    case elem(type, 0) do
-      :various ->
-        for album <- elem(type, 1) do
-          album_key = {:collection, :various, album.id}
-          [{album_key, album}] ++ acc
-        end
-      :single ->
-        for artist <- elem(type, 1) do
-          for album <- artist |> Map.to_list() |> List.first() |> elem(1) do
-            album_key = {:collection, :single, album.id}
-            [{album_key, album}] ++ acc
-          end
-        end
+  defp key_for_storage({:various, albums}, acc) when albums != [] do
+    for album <- albums do
+      [{{:collection, :various, album.id}, album}] ++ acc
     end
   end
+  defp key_for_storage({:single, albums}, acc) when albums != [] do
+    for artist <- albums do
+      for album <- artist |> Map.to_list() |> List.first() |> elem(1) do
+        [{{:collection, :single, album.id}, album}] ++ acc
+      end
+    end
+  end
+  defp key_for_storage(_, acc), do: acc
 end
