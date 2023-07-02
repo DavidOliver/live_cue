@@ -2,98 +2,54 @@
 
 A Phoenix LiveView-powered shared-file music collection player, for listening in sync with friends.
 
+
 ## Audio file format support
 
 FLAC. (mp3 and m4a support is in progress.)
 
-## Setup
 
-These instructions are for Debian/Ubuntu.
+## Set up and configure
 
-### 1. Install cmus
+### 1. Ensure the Nix package manager is installed
 
-	$ sudo apt install cmus
+[Instructions](https://zero-to-nix.com/concepts/nix-installer).
 
-### 2. Install languages and supporting packages
+### 2. Ensure Devbox is installed
 
-1. [Install asdf](https://asdf-vm.com/#/core-manage-asdf).
+[Instructions](https://www.jetpack.io/devbox/docs/installing_devbox/).
 
-2. Install Erlang build process dependencies:
-
-	```
-	$ sudo apt install build-essential autoconf m4 libncurses5-dev libwxgtk3.0-gtk3-dev libgl1-mesa-dev libglu1-mesa-dev libpng-dev libssh-dev unixodbc-dev xsltproc fop libxml2-utils libncurses-dev
-	```
-
-3. Install Erlang:
-
-	```
-	$ asdf plugin add erlang https://github.com/asdf-vm/asdf-erlang.git
-	$ export KERL_CONFIGURE_OPTIONS="--disable-debug --without-javac"
-	$ asdf install erlang 23.2.7
-	```
-
-4. Install Elixir:
-
-	```
-	$ asdf plugin-add elixir https://github.com/asdf-vm/asdf-elixir.git
-	$ asdf install elixir 1.11.3-otp-23
-	```
-
-5. Install inotify filesystem-watcher Linux interface:
-
-	```
-	$ sudo apt install inotify-tools
-	```
-
-### 3. Get source code and configure
+### 3. Get LiveCue source code and configure
 
 1. Clone repository:
 
-	```
-	$ git clone git@bitbucket.org:theoliverbros/live_cue.git [<destination>]
-	```
+	`$ git clone git@bitbucket.org:theoliverbros/live_cue.git <destination-directory>`
 
-2. `cd` to the repo directory.
+2. `cd` to the repository directory.
 
-3. Copy `config/dev.secret.exs.example` to `config/dev.secret.exs`, and populate all values in the new config file.
+3. Prepare and enter the environment:
 
-4. Install Elixir dependencies:
+	`$ devbox shell`
 
-	```
-	$ mix deps.get
-	```
+4. Run initial setup:
 
-	Answer yes to any subsequent questions on installing Rebar and/or Hex.
+	`$ devbox run setup`
 
-### 4. Install frontend-related dependencies
+5. Set values in `config/dev.secret.exs`.
 
-1. [Install Node](https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions). (14 LTS recommended.)
 
-2. Install project JavaScript dependencies:
+## Perform initial run
 
-	```
-	$ npm install --prefix assets
-	```
+1. If not already in the Devbox environment:
 
-## Run
+	`$ devbox shell`
 
-1. In a separate terminal, run cmus:
+2. Start LiveCue:
 
-	```
-	$ cmus
-	```
+	`$ ./start.sh`
 
-2. In the original terminal, start LiveCue:
+	This opens and configures a `tmux` session, in which `cmus` (the audio player) and `LiveCue` itself are run.
 
-	```
-	$ iex --name <node name> --cookie <pre-shared secret> -S mix phx.server
-	```
-
-	For example:
-
-	```
-	$ iex --name ian --cookie m0nk3y -S mix phx.server
-	```
+	When prompted by `LiveCue` for the node name, type something short and unique across your network of nodes. (For example, `i` or `d` in the case of two brothers with names beginning with `I` and `D`.)
 
 3. Parse and process local music collection files:
 
@@ -103,29 +59,43 @@ These instructions are for Debian/Ubuntu.
 
 	This step is only required on the first run and after music collection updates.
 
-4. Connect to the shared network
+4. Check that playing works locally.
+
+	Visit [`localhost:4000`](http://localhost:4000) in your web browser.
+
+	Choose an album or track and press play!
+
+	To stop the app and close down related services:
+
+	1. Press Ctrl+C twice in the LiveCue iex terminal.
+	2. Type `:q` and press Return to quit `cmus`.
+	3. `exit` to exit `tmux`.
+
+	(Hopefully, the stopping process will soon be improved.)
+
+
+## Listen in sync with your friend
+
+1. Connect to the shared network.
 
 	For example, ZeroTier.
 
-5. Connect to your friend’s LiveCue node:
+2. Start LiveCue, as per steps 1 and 2 of the initial run.
 
-	```
-	iex> Node.connect(:<node name>)
-	```
+3. List visible Elixir nodes:
 
-	For example:
+	`iex> Node.list()`
 
-	```
-	iex> Node.connect(:david@doliver)
-	```
+4. Connect to your friend’s LiveCue node:
 
-Visit [`localhost:4000`](http://localhost:4000) in your web browser.
+	`iex> Node.connect(:<node name>)`
 
-Select an album or track and hit play! Play, pause and stop actions should take effect on both your player and that of your friend’s.
+5. Visit [`localhost:4000`](http://localhost:4000) in your web browser.
 
-To stop the app, press Ctrl+C twice in the LiveCue iex terminal.
+6. Choose an album or track and press play! Play, pause and stop actions should take effect in both your player and that of your friend’s.
 
-## Parsing collection and storing data
+
+## Notes on parsing collection and storing data
 
 Processing collection files into data for use by LiveCue is done in two main steps.
 

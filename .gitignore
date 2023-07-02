@@ -34,3 +34,6 @@ npm-debug.log
 
 # Sensitive/instance-specific config.
 **/*.secret.exs
+
+# Devbox-installed Hex and Mix
+/.nix-*

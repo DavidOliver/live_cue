@@ -8,12 +8,13 @@ config :live_cue, LiveCueWeb.Endpoint,
   code_reloader: true,
   check_origin: false,
   watchers: [
-    node: [
-      "node_modules/.bin/snowpack",
-      "build",
-      "--watch",
-      cd: Path.expand("../assets", __DIR__)
-    ]
+    # node: [
+    #   "node_modules/.bin/snowpack",
+    #   "--quiet",
+    #   "build",
+    #   "--watch",
+    #   cd: Path.expand("../assets", __DIR__)
+    # ]
   ]
 
 # ## SSL Support

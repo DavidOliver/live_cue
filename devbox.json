@@ -1,0 +1,29 @@
+{
+  "packages": [
+    "elixir@1.14.4",
+    "elixir-ls@0.14.5",
+    "nodejs@20.0.0",
+    "inotify-tools@latest",
+    "cmus@2.10.0",
+    "tmux@3.3a"
+  ],
+  "shell": {
+    "init_hook": [
+      "export MIX_HOME=$PWD/.nix-mix",
+      "export HEX_HOME=$PWD/.nix-hex",
+      "export ERL_AFLAGS='-kernel shell_history enabled'"
+    ],
+    "scripts": {
+      "setup": [
+        "cp --no-clobber config/dev.secret.exs.example config/dev.secret.exs",
+        "mkdir -p .nix-mix .nix-hex",
+        "mix local.hex --force",
+        "mix local.rebar --force",
+        "mix setup"
+      ]
+    }
+  },
+  "nixpkgs": {
+    "commit": "f80ac848e3d6f0c12c52758c0f25c10c97ca3b62"
+  }
+}
