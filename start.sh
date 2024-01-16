@@ -6,10 +6,6 @@ secret=monkey
 
 cmd='iex --sname "${name}" --cookie "${secret}" -S mix phx.server'
 
-# https://github.com/jetpack-io/devbox/issues/1142
-# https://github.com/jetpack-io/devbox/issues/1055
-# cmd='iex --sname "${name}" --cookie "${secret}" -S /nix/store/d0dha8faqppap6wl9b8ykml6jskahyhl-elixir-1.14.4/bin/mix phx.server'
-
 SESSION="LiveCue"
 SESSIONEXISTS=$(tmux list-sessions | grep $SESSION)
 

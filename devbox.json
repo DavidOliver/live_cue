@@ -1,11 +1,10 @@
 {
   "packages": [
-    "elixir@1.14.4",
-    "elixir-ls@0.14.5",
-    "nodejs@20.0.0",
     "inotify-tools@latest",
-    "cmus@2.10.0",
-    "tmux@3.3a"
+    "tmux@3.3a",
+    "elixir_1_16@latest",
+    "nodejs@20",
+    "cmus@2"
   ],
   "shell": {
     "init_hook": [
@@ -22,8 +21,5 @@
         "mix setup"
       ]
     }
-  },
-  "nixpkgs": {
-    "commit": "f80ac848e3d6f0c12c52758c0f25c10c97ca3b62"
   }
 }

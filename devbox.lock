@@ -1,35 +1,99 @@
 {
   "lockfile_version": "1",
   "packages": {
-    "cmus@2.10.0": {
-      "last_modified": "2023-05-01T16:53:22Z",
-      "resolved": "github:NixOS/nixpkgs/8670e496ffd093b60e74e7fa53526aa5920d09eb#cmus",
-      "version": "2.10.0"
+    "cmus@2": {
+      "last_modified": "2023-12-13T22:54:10Z",
+      "resolved": "github:NixOS/nixpkgs/fd04bea4cbf76f86f244b9e2549fca066db8ddff#cmus",
+      "source": "devbox-search",
+      "version": "2.10.0",
+      "systems": {
+        "aarch64-darwin": {
+          "store_path": "/nix/store/d01kxbzjk89xln00ml6fgydrx888m2cl-cmus-2.10.0"
+        },
+        "aarch64-linux": {
+          "store_path": "/nix/store/kyyhxf4pnj9cxk4wphm24l0446ipczk4-cmus-2.10.0"
+        },
+        "x86_64-darwin": {
+          "store_path": "/nix/store/4d1fa40q3y9kg88k4p3p6wx3vl3d8fjj-cmus-2.10.0"
+        },
+        "x86_64-linux": {
+          "store_path": "/nix/store/csj7wg15jdindj48lsl47pwqy4ix8xg5-cmus-2.10.0"
+        }
+      }
     },
-    "elixir-ls@0.14.5": {
-      "last_modified": "2023-05-01T16:53:22Z",
-      "resolved": "github:NixOS/nixpkgs/8670e496ffd093b60e74e7fa53526aa5920d09eb#elixir-ls",
-      "version": "0.14.5"
-    },
-    "elixir@1.14.4": {
-      "last_modified": "2023-05-01T16:53:22Z",
-      "resolved": "github:NixOS/nixpkgs/8670e496ffd093b60e74e7fa53526aa5920d09eb#elixir",
-      "version": "1.14.4"
+    "elixir_1_16@latest": {
+      "last_modified": "2023-12-25T10:13:25Z",
+      "resolved": "github:NixOS/nixpkgs/e1fa12d4f6c6fe19ccb59cac54b5b3f25e160870#elixir_1_16",
+      "source": "devbox-search",
+      "version": "1.16.0",
+      "systems": {
+        "aarch64-darwin": {
+          "store_path": "/nix/store/87ji6znka4nbgl0gbszpipgmnjwam03z-elixir-1.16.0"
+        },
+        "aarch64-linux": {
+          "store_path": "/nix/store/vq2vhbs5jvgiip0ln0xnx2m3b14sq3vm-elixir-1.16.0"
+        },
+        "x86_64-darwin": {
+          "store_path": "/nix/store/66f9b1d1c4fmhz6bd3fpcny6brjm0fk7-elixir-1.16.0"
+        },
+        "x86_64-linux": {
+          "store_path": "/nix/store/l55vx1n5b1kn7ic5g5cs4dasfxm4pcf6-elixir-1.16.0"
+        }
+      }
     },
     "inotify-tools@latest": {
-      "last_modified": "2023-05-01T16:53:22Z",
-      "resolved": "github:NixOS/nixpkgs/8670e496ffd093b60e74e7fa53526aa5920d09eb#inotify-tools",
-      "version": "3.22.6.0"
+      "last_modified": "2023-12-13T22:54:10Z",
+      "resolved": "github:NixOS/nixpkgs/fd04bea4cbf76f86f244b9e2549fca066db8ddff#inotify-tools",
+      "source": "devbox-search",
+      "version": "4.23.9.0",
+      "systems": {
+        "aarch64-linux": {
+          "store_path": "/nix/store/bx8cn193rrgn6clwpvnx5xal6n3cqpxn-inotify-tools-4.23.9.0"
+        },
+        "x86_64-linux": {
+          "store_path": "/nix/store/0j4pip6w3hbihwjmf0m5cjnqzj60nkvf-inotify-tools-4.23.9.0"
+        }
+      }
     },
-    "nodejs@20.0.0": {
-      "last_modified": "2023-05-01T16:53:22Z",
-      "resolved": "github:NixOS/nixpkgs/8670e496ffd093b60e74e7fa53526aa5920d09eb#nodejs_20",
-      "version": "20.0.0"
+    "nodejs@20": {
+      "last_modified": "2023-12-13T22:54:10Z",
+      "resolved": "github:NixOS/nixpkgs/fd04bea4cbf76f86f244b9e2549fca066db8ddff#nodejs_20",
+      "source": "devbox-search",
+      "version": "20.10.0",
+      "systems": {
+        "aarch64-darwin": {
+          "store_path": "/nix/store/rr171p6xks9xf2f0ds9wyi4mc36xm5c1-nodejs-20.10.0"
+        },
+        "aarch64-linux": {
+          "store_path": "/nix/store/hgm5r621kl22fgkb42q1bf9mj7vsydvp-nodejs-20.10.0"
+        },
+        "x86_64-darwin": {
+          "store_path": "/nix/store/pq1p13a24628rxwf968nb3pfnpvpfy0r-nodejs-20.10.0"
+        },
+        "x86_64-linux": {
+          "store_path": "/nix/store/yc5bicc5zs5czjp5q5aygz79km84rmd4-nodejs-20.10.0"
+        }
+      }
     },
     "tmux@3.3a": {
-      "last_modified": "2023-05-25T03:54:59Z",
-      "resolved": "github:NixOS/nixpkgs/8d4d822bc0efa9de6eddc79cb0d82897a9baa750#tmux",
-      "version": "3.3a"
+      "last_modified": "2023-12-13T22:54:10Z",
+      "resolved": "github:NixOS/nixpkgs/fd04bea4cbf76f86f244b9e2549fca066db8ddff#tmux",
+      "source": "devbox-search",
+      "version": "3.3a",
+      "systems": {
+        "aarch64-darwin": {
+          "store_path": "/nix/store/8975mr0aa3x76lzxzgsay0v6w6gl9kr0-tmux-3.3a"
+        },
+        "aarch64-linux": {
+          "store_path": "/nix/store/ql8c25a35gnsv0c85iy5abc70bs4m3yp-tmux-3.3a"
+        },
+        "x86_64-darwin": {
+          "store_path": "/nix/store/y89iriv4iznf7yyk9mv57ps0ypj8a6lv-tmux-3.3a"
+        },
+        "x86_64-linux": {
+          "store_path": "/nix/store/w8lxxas46vy4paqn0pjp7axfkj5nbpxi-tmux-3.3a"
+        }
+      }
     }
   }
 }
