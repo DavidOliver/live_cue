@@ -4,7 +4,8 @@
     "tmux@3.3a",
     "elixir_1_16@latest",
     "nodejs@20",
-    "cmus@2"
+    "cmus@2",
+    "unison@2"
   ],
   "shell": {
     "init_hook": [

@@ -94,6 +94,26 @@
           "store_path": "/nix/store/w8lxxas46vy4paqn0pjp7axfkj5nbpxi-tmux-3.3a"
         }
       }
+    },
+    "unison@2": {
+      "last_modified": "2023-12-13T22:54:10Z",
+      "resolved": "github:NixOS/nixpkgs/fd04bea4cbf76f86f244b9e2549fca066db8ddff#unison",
+      "source": "devbox-search",
+      "version": "2.53.2",
+      "systems": {
+        "aarch64-darwin": {
+          "store_path": "/nix/store/6vxj382b7aks51cyj6f6iacgr0abfk4g-unison-2.53.2"
+        },
+        "aarch64-linux": {
+          "store_path": "/nix/store/5159ijx06s2g95qxd2g0iaj2smpx9pln-unison-2.53.2"
+        },
+        "x86_64-darwin": {
+          "store_path": "/nix/store/3pvihhwpgaxvcb9mqnwhq77fiyvyfq9l-unison-2.53.2"
+        },
+        "x86_64-linux": {
+          "store_path": "/nix/store/004mdfa3xbks28i74ikxrl9506sifk05-unison-2.53.2"
+        }
+      }
     }
   }
 }
