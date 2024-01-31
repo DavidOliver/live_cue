@@ -5,16 +5,16 @@ defmodule LiveCue.Application do
 
   use Application
 
+  @impl true
   def start(_type, _args) do
     children = [
-      # Start the Telemetry supervisor
       LiveCueWeb.Telemetry,
-      # Start the PubSub system
+      {DNSCluster, query: Application.get_env(:live_cue, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: LiveCue.PubSub},
-      # Start the Endpoint (http/https)
-      LiveCueWeb.Endpoint,
       # Start a worker by calling: LiveCue.Worker.start_link(arg)
-      # {LiveCue.Worker, arg}
+      # {LiveCue.Worker, arg},
+      # Start to serve requests, typically the last entry
+      LiveCueWeb.Endpoint,
       LiveCue.DB,
     ]
 
@@ -26,6 +26,7 @@ defmodule LiveCue.Application do
 
   # Tell Phoenix to update the endpoint configuration
   # whenever the application is updated.
+  @impl true
   def config_change(changed, _new, removed) do
     LiveCueWeb.Endpoint.config_change(changed, removed)
     :ok

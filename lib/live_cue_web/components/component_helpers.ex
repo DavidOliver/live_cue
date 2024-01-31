@@ -1,4 +1,4 @@
-defmodule LiveCueWeb.ViewHelpers do
+defmodule LiveCueWeb.ComponentHelpers do
   @moduledoc """
   Conveniences for use in views.
   """

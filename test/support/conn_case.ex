@@ -19,15 +19,15 @@ defmodule LiveCueWeb.ConnCase do
 
   using do
     quote do
+      # The default endpoint for testing
+      @endpoint LiveCueWeb.Endpoint
+
+      use LiveCueWeb, :verified_routes
+
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
       import LiveCueWeb.ConnCase
-
-      alias LiveCueWeb.Router.Helpers, as: Routes
-
-      # The default endpoint for testing
-      @endpoint LiveCueWeb.Endpoint
     end
   end
 

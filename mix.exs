@@ -5,9 +5,8 @@ defmodule LiveCue.MixProject do
     [
       app: :live_cue,
       version: "0.1.0",
-      elixir: "~> 1.7",
+      elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -33,17 +32,19 @@ defmodule LiveCue.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.5.8"},
-      {:phoenix_live_view, "~> 0.15.1"},
-      {:floki, ">= 0.27.0", only: :test},
-      {:phoenix_html, "~> 2.11"},
+      {:phoenix, "~> 1.7.10"},
+      {:phoenix_html, "~> 3.3"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_dashboard, "~> 0.4"},
-      {:telemetry_metrics, "~> 0.4"},
-      {:telemetry_poller, "~> 0.4"},
-      {:gettext, "~> 0.11"},
-      {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"},
+      {:phoenix_live_view, "~> 0.20.1"},
+      {:floki, ">= 0.30.0", only: :test},
+      {:phoenix_live_dashboard, "~> 0.8.2"},
+      {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
+      {:telemetry_metrics, "~> 0.6"},
+      {:telemetry_poller, "~> 1.0"},
+      {:gettext, "~> 0.20"},
+      {:jason, "~> 1.2"},
+      {:dns_cluster, "~> 0.1.1"},
+      {:bandit, ">= 0.0.0"},
       {:flac_parser, git: "https://github.com/DavidOliver/flac_parser", ref: "5b5f60d2a714177a9e27cf1f7c113b7d83b9a09d"},
       {:id3v2, "~> 0.1.2"},
       {:cubdb, "~> 1.1.0"},
@@ -58,7 +59,10 @@ defmodule LiveCue.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "cmd npm install --prefix assets", "cmd npm run deploy --prefix assets"]
+      setup: ["deps.get", "assets.setup", "assets.build"],
+      "assets.setup": ["esbuild.install --if-missing"],
+      "assets.build": ["esbuild default"],
+      "assets.deploy": ["esbuild default --minify", "phx.digest"]
     ]
   end
 end

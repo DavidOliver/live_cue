@@ -7,12 +7,9 @@ defmodule LiveCueWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_live_cue_key",
-    signing_salt: "Dwzf8zhb"
+    signing_salt: "y3xRcBqj",
+    same_site: "Lax"
   ]
-
-  socket "/socket", LiveCueWeb.UserSocket,
-    websocket: true,
-    longpoll: false
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
@@ -24,7 +21,7 @@ defmodule LiveCueWeb.Endpoint do
     at: "/",
     from: :live_cue,
     gzip: false,
-    only: ~w(css fonts images js _snowpack favicon.ico robots.txt)
+    only: LiveCueWeb.static_paths()
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
