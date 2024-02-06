@@ -5,8 +5,8 @@
 -->
 
 <p>
-	<.button phx-click="stop" class="button-stop">⏹︎</.button>
-	<.button phx-click="pause_resume" class="button-pause-resume">⏯︎︎</.button>
+	<.button phx-click="stop" class="stop-button">⏹︎</.button>
+	<.button phx-click="pause_resume" class="pause-resume-button">⏯︎︎</.button>
 </p>
 
 <section>
@@ -14,65 +14,57 @@
 
 	<%= for artist <- @index.single do %>
 		<h3><%= artist_map_name(artist) %></h3>
-		<ul>
-			<%= for album <- artist_map_albums(artist) do %>
-				<li>
-					<.button
-						phx-click="expand"
-						phx-target={"#album-#{album.id}"}
-						phx-value-type="single"
-						phx-value-id={album.id}
-						class="album-title">
-						<%= album.title %>
-						<span class="album-meta">
-							(<%= album.date %> <%= album.genre %>)
-						</span>
-					</.button>
-					<.button
-						phx-click="play_album"
-						phx-value-album-id={album.id}
-						phx-value-album-type={album.type}
-						class="button-play">
-						▶
-					</.button>
-					<.live_component
-						module={AlbumComponent} id={album.id}
-						type={:single} album_title={album.title} album={nil}
-					/>
-				</li>
-			<% end %>
-		</ul>
+		<article :for={album <- artist_map_albums(artist)} class="album">
+			<.button
+				phx-click="expand"
+				phx-target={"#album-#{album.id}"}
+				phx-value-type="single"
+				phx-value-id={album.id}
+				class="album-title-button">
+				<%= album.title %>
+				<span class="album-meta">
+					(<%= album.date %> <%= album.genre %>)
+				</span>
+			</.button>
+			<.button
+				phx-click="play_album"
+				phx-value-album-id={album.id}
+				phx-value-album-type={album.type}
+				class="play-button">
+				▶
+			</.button>
+			<.live_component
+				module={AlbumComponent} id={album.id}
+				type={:single} album_title={album.title} album={nil}
+			/>
+		</article>
 	<% end %>
 
 	<h3>Various Artists</h3>
 
-	<ul>
-		<%= for album <- @index.various do %>
-			<li>
-				<.button
-					phx-click="expand"
-					phx-target={"#album-#{album.id}"}
-					phx-value-type="various"
-					phx-value-id={album.id}
-					class="album-title">
-					<%= album.title %>
-					<span class="album-meta">
-						(<%= album.date %> <%= album.genre %>)
-					</span>
-				</.button>
-				<.button
-					phx-click="play_album"
-					phx-value-album-id={album.id}
-					phx-value-album-type={album.type}
-					class="button-play">
-					▶
-				</.button>
-				<.live_component
-					module={AlbumComponent} id={album.id}
-					type={:various} album_title={album.title} album={nil}
-				/>
-			</li>
-		<% end %>
-	</ul>
+	<article :for={album <- @index.various} class="album">
+		<.button
+			phx-click="expand"
+			phx-target={"#album-#{album.id}"}
+			phx-value-type="various"
+			phx-value-id={album.id}
+			class="album-title-button">
+			<%= album.title %>
+			<span class="album-meta">
+				(<%= album.date %> <%= album.genre %>)
+			</span>
+		</.button>
+		<.button
+			phx-click="play_album"
+			phx-value-album-id={album.id}
+			phx-value-album-type={album.type}
+			class="play-button">
+			▶
+		</.button>
+		<.live_component
+			module={AlbumComponent} id={album.id}
+			type={:various} album_title={album.title} album={nil}
+		/>
+	</article>
 
 </section>

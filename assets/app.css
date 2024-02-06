@@ -1,0 +1,45 @@
+.album {
+	margin: .5rem 0;
+}
+
+.track-list {
+	margin: 0;
+	padding: 0;
+}
+
+.track {
+	list-style: none;
+	margin: .25rem 0;
+}
+
+.track-number {
+	display: inline-block;
+	min-width: 1rem;
+	text-align: right;
+	margin-right: .25rem;
+	opacity: .4;
+}
+
+.track-title {
+	margin-right: .25rem;
+}
+
+.track-artist {
+	font-size: smaller;
+	opacity: .4;
+}
+
+button {
+	background-color: transparent;
+	border: 1px solid gray;
+	border-radius: 4px;
+	min-height: 1.5rem;
+}
+
+/*
+Button classes:
+.stop-button
+.pause-resume-button
+.album-title-button
+.play-button
+*/

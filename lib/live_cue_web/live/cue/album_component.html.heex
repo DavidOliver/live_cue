@@ -1,21 +1,17 @@
-<div id={"album-#{@id}"} class="album-tracks">
-	<%= if @album[:tracks] do %>
-		<ul>
-			<%= for track <- @album.tracks do %>
-				<li class="track">
-					<span class="track-number"><%= track[:number] %>.</span>
-					<span class="track-title"><%= track[:title] %></span>
-					<span class="track-artist">(<%= track[:artist] %>)</span>
-					<.button
-						phx-click="play_track"
-						phx-value-album-id={@album.id},
-						phx-value-album-type={@album.type}
-						phx-value-track-number={track[:number]}
-						class="button-play">
-						▶
-					</.button>
-				</li>
-			<% end %>
-		</ul>
-	<% end %>
+<div id={"album-#{@id}"}>
+	<ul :if={@album[:tracks]} class="track-list">
+		<li :for={track <- @album.tracks} class="track">
+			<.button
+				phx-click="play_track"
+				phx-value-album-id={@album.id}
+				phx-value-album-type={@album.type}
+				phx-value-track-number={track[:number]}
+				class="play-button">
+				▶
+			</.button>
+			<span class="track-number"><%= track[:number] %></span>
+			<span class="track-title"><%= track[:title] %></span>
+			<span :if={@type == :various} class="track-artist"><%= track[:artist] %></span>
+		</li>
+	</ul>
 </div>
