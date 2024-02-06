@@ -4,11 +4,10 @@ defmodule LiveCueWeb.AlbumComponent do
 
   @impl true
   def handle_event("expand", %{"type" => type, "id" => id}, socket) do
-    album =
-      case socket.assigns.album do
-        nil -> Collection.get_album(type, id)
-        _ -> nil
-      end
+    album = case socket.assigns.album do
+      %{tracks: tracks} when tracks == [] -> Collection.get_album(type, id)
+      _ -> socket.assigns.album |> Map.replace(:tracks, [])
+    end
 
     {:noreply, assign(socket, :album, album)}
   end

@@ -1,4 +1,25 @@
-<div id={"album-#{@id}"}>
+<div id={"album-#{@album.id}"}>
+
+	<.button
+		phx-click="expand"
+		phx-target={@myself}
+		phx-value-type={@album.type}
+		phx-value-id={@album.id}
+		class="album-title-button">
+		<%= @album.title %>
+		<span class="album-meta">
+			(<%= @album.date %> <%= @album.genre %>)
+		</span>
+	</.button>
+
+	<.button
+		phx-click="play_album"
+		phx-value-album-id={@album.id}
+		phx-value-album-type={@album.type}
+		class="play-button">
+		▶
+	</.button>
+
 	<ul :if={@album[:tracks]} class="track-list">
 		<li :for={track <- @album.tracks} class="track">
 			<.button
@@ -11,7 +32,8 @@
 			</.button>
 			<span class="track-number"><%= track[:number] %></span>
 			<span class="track-title"><%= track[:title] %></span>
-			<span :if={@type == :various} class="track-artist"><%= track[:artist] %></span>
+			<span :if={@album.type == :various} class="track-artist"><%= track[:artist] %></span>
 		</li>
 	</ul>
+
 </div>
