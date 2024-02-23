@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 
-read -p 'Node name (i|d): ' name
+read -p 'Node ID (i|d): ' id
 
-secret=monkey
+read -p 'Node IP address: ' ip
 
-cmd='iex --sname "${name}" --cookie "${secret}" -S mix phx.server'
+name="${id}@${ip}"
+secret='monkey'
+erl_options="-kernel inet_dist_listen_min 9001 inet_dist_listen_max 9001"
+
+cmd="iex --name \"${name}\" --cookie \"${secret}\" --erl \"${erl_options}\" -S mix phx.server"
 
 SESSION="LiveCue"
 SESSIONEXISTS=$(tmux list-sessions | grep $SESSION)

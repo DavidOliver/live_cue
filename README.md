@@ -49,8 +49,6 @@ FLAC. (mp3 and m4a support is in progress.)
 
 	This opens and configures a `tmux` session, in which `cmus` (the audio player) and `LiveCue` itself are run.
 
-	When prompted by `LiveCue` for the node name, type something short and unique across your network of nodes. (For example, `i` or `d` in the case of two brothers with names beginning with `I` and `D`.)
-
 3. Parse and process local music collection files:
 
 	```
@@ -76,19 +74,19 @@ FLAC. (mp3 and m4a support is in progress.)
 
 ## Listen in sync with your friend
 
-1. Connect to the shared network.
+1. Open ports `4369` and `9001` in your computer’s local software firewall.
 
-	For example, ZeroTier.
+2. Connect to the shared network. For example, ZeroTier.
 
-2. Start LiveCue, as per steps 1 and 2 of the initial run.
-
-3. List visible Elixir nodes:
-
-	`iex> Node.list()`
+3. Start LiveCue, as per steps 1 and 2 of the initial run.
 
 4. Connect to your friend’s LiveCue node:
 
-	`iex> Node.connect(:<node name>)`
+	`iex> Node.connect :"<remote node name>"`
+
+	`true` should be returned.
+
+	Example: `iex> Node.connect :"d@177.27.47.107"`
 
 5. Visit [`localhost:4000`](http://localhost:4000) in your web browser.
 
