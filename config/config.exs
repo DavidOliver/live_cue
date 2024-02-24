@@ -39,6 +39,23 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :libcluster,
+  topologies: [
+    epmd: [
+      strategy: Elixir.Cluster.Strategy.Epmd,
+      config: [
+        # timeout: 30_000,
+        hosts: [
+          :"livecue@172.24.127.250", # blue
+          :"livecue@172.24.45.12",   # sanguinalis
+          :"livecue@172.24.89.103",  # Seraph
+          :"livecue@172.24.31.30",   # Ian-Nuc
+          :"livecue@172.24.11.64",   # ZeroOne
+        ]
+      ]
+    ]
+  ]
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

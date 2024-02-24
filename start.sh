@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-read -p 'Node ID (i|d): ' id
+source ./envs/.env.all
 
-read -p 'Node IP address: ' ip
+ip_address=`sudo zerotier-cli get ${NETWORK_ID} ip4`
+name="livecue@${ip_address}"
 
-name="${id}@${ip}"
 secret='monkey'
 erl_options='-kernel inet_dist_listen_min 9001 inet_dist_listen_max 9001'
 

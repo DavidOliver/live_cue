@@ -40,3 +40,7 @@ npm-debug.log
 
 # Devbox-installed Hex and Mix
 /.nix-*
+
+# Runtime environment configuration values
+/envs/*
+!/envs/*.example

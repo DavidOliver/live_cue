@@ -10,6 +10,7 @@ defmodule LiveCue.Application do
     children = [
       LiveCueWeb.Telemetry,
       {DNSCluster, query: Application.get_env(:live_cue, :dns_cluster_query) || :ignore},
+      {Cluster.Supervisor, [Application.get_env(:libcluster, :topologies), [name: LiveCue.ClusterSupervisor]]},
       {Phoenix.PubSub, name: LiveCue.PubSub},
       # Start a worker by calling: LiveCue.Worker.start_link(arg)
       # {LiveCue.Worker, arg},

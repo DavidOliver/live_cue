@@ -48,6 +48,7 @@ defmodule LiveCue.MixProject do
       {:flac_parser, git: "https://github.com/DavidOliver/flac_parser", ref: "5b5f60d2a714177a9e27cf1f7c113b7d83b9a09d"},
       {:id3v2, "~> 0.1.2"},
       {:cubdb, "~> 1.1.0"},
+      {:libcluster, "~> 3.3"},
     ]
   end
 

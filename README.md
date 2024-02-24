@@ -2,6 +2,8 @@
 
 A Phoenix LiveView-powered shared-file music collection player, for listening in sync with friends.
 
+LiveCue is currently configured to use ZeroTier.
+
 
 ## Audio file format support
 
@@ -26,18 +28,22 @@ FLAC. (mp3 and m4a support is in progress.)
 
 2. `cd` to the repository directory.
 
-3. Prepare and enter the environment:
+3. Set values in `envs/.env.all` and `config/dev.secret.exs`.
+
+4. Prepare and enter the environment:
 
 	`$ devbox shell`
 
-4. Run initial setup:
+5. Run initial setup:
 
 	`$ devbox run setup`
 
-5. Set values in `config/dev.secret.exs`.
+6. Open ports `4369` and `9001`, TCP protocol, in your computer’s local software firewall.
+
+7. Connect to ZeroTier if not already connected.
 
 
-## Perform initial run
+## Run
 
 1. If not already in the Devbox environment:
 
@@ -57,40 +63,21 @@ FLAC. (mp3 and m4a support is in progress.)
 
 	This step is only required on the first run and after music collection updates.
 
-4. Check that playing works locally.
-
-	Visit [`localhost:4000`](http://localhost:4000) in your web browser.
+4. Visit [`localhost:4000`](http://localhost:4000) in your web browser.
 
 	Choose an album or track and press play!
 
-	To stop the app and close down related services:
 
-	1. Press Ctrl+C twice in the LiveCue iex terminal.
-	2. Type `:q` and press Return to quit `cmus`.
-	3. `exit` to exit `tmux`.
+## Stop
 
-	(Hopefully, the stopping process will soon be improved.)
+To stop the app and close down related services:
 
+1. Press Ctrl+C twice in the LiveCue iex terminal.
+2. Type `:q` and press Return to quit `cmus`.
+3. `exit` to exit the cmus pane.
+4. `exit` to exit `tmux`.
 
-## Listen in sync with your friend
-
-1. Open ports `4369` and `9001`, TCP protocol, in your computer’s local software firewall.
-
-2. Connect to the shared network. For example, ZeroTier.
-
-3. Start LiveCue, as per steps 1 and 2 of the initial run.
-
-4. Connect to your friend’s LiveCue node:
-
-	`iex> Node.connect :"<remote node name>"`
-
-	`true` should be returned.
-
-	Example: `iex> Node.connect :"d@177.27.47.107"`
-
-5. Visit [`localhost:4000`](http://localhost:4000) in your web browser.
-
-6. Choose an album or track and press play! Play, pause and stop actions should take effect in both your player and that of your friend’s.
+(Hopefully, the stopping process will soon be improved.)
 
 
 ## Notes on parsing collection and storing data
