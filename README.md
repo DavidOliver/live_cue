@@ -74,7 +74,7 @@ FLAC. (mp3 and m4a support is in progress.)
 
 ## Listen in sync with your friend
 
-1. Open ports `4369` and `9001` in your computer’s local software firewall.
+1. Open ports `4369` and `9001`, TCP protocol, in your computer’s local software firewall.
 
 2. Connect to the shared network. For example, ZeroTier.
 
