@@ -49,6 +49,7 @@ defmodule LiveCue.MixProject do
       {:id3v2, "~> 0.1.2"},
       {:cubdb, "~> 1.1.0"},
       {:libcluster, "~> 3.3"},
+      {:dotenvy, "~> 0.8.0"},
     ]
   end
 

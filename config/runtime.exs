@@ -1,4 +1,12 @@
 import Config
+import Dotenvy
+
+# Set directory containing .env files. (Release overlays config results in
+# .env files being in root directory.)
+dir = System.get_env("RELEASE_ROOT") || "envs/"
+
+# Source .env files.
+source!(["#{dir}.env.all", System.get_env()])
 
 # config/runtime.exs is executed for all environments, including
 # during releases. It is executed after compilation and before the
@@ -6,6 +14,29 @@ import Config
 # and secrets from environment variables or elsewhere. Do not define
 # any compile-time configuration in here, as it won't be applied.
 # The block below contains prod specific runtime configuration.
+
+config :live_cue,
+  collection_directory: Path.expand(env!("COLLECTION_DIRECTORY", :string!)),
+  db_directory: Path.expand(env!("DB_DIRECTORY", :string!))
+
+hosts =
+  "NODES"
+  |> env!(:string!)
+  |> String.split("\n")
+  |> Enum.reject(&String.length(&1) == 0)
+  |> Enum.map(&String.replace_prefix(&1, "", "livecue@"))
+  |> Enum.map(&String.to_atom(&1))
+
+config :libcluster,
+  topologies: [
+    epmd: [
+      strategy: Elixir.Cluster.Strategy.Epmd,
+      config: [
+        # timeout: 30_000,
+        hosts: hosts,
+      ]
+    ]
+  ]
 
 # ## Using releases
 #

@@ -28,7 +28,7 @@ FLAC. (mp3 and m4a support is in progress.)
 
 2. `cd` to the repository directory.
 
-3. Set values in `envs/.env.all` and `config/dev.secret.exs`.
+3. Set values in `envs/.env.all`.
 
 4. Prepare and enter the environment:
 
