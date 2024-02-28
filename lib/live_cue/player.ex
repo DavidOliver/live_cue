@@ -1,7 +1,7 @@
 defmodule LiveCue.Player do
   alias LiveCue.Collection
 
-  def play_album(%{album_type: album_type, album_id: album_id}) do
+  def cue_album(%{album_type: album_type, album_id: album_id, action: action}) do
     album_relative_path =
       Collection.get_album(album_type, album_id)
       |> Map.get(:tracks)
@@ -12,39 +12,46 @@ defmodule LiveCue.Player do
       |> List.last()
       |> String.reverse()
 
-    :ok = play(album_relative_path)
+    :ok = cue(album_relative_path, action)
   end
 
-  def play_track(%{album_type: album_type, album_id: album_id, track_number: track_number}) do
+  def cue_track(%{album_type: album_type, album_id: album_id, track_number: track_number, action: action}) do
     track_relative_path =
       Collection.get_album(album_type, album_id)
       |> Map.get(:tracks)
       |> Enum.find(&(&1.number == track_number))
       |> Map.get(:relative_path)
 
-    :ok = play(track_relative_path)
+    :ok = cue(track_relative_path, action)
   end
 
   def stop(), do: :ok = cmus_remote([["--stop"]])
 
   def pause_resume(), do: :ok = cmus_remote([["--pause"]])
 
-  defp play(relative_path) when is_binary(relative_path) do
-    absolute_path =
-      :live_cue
-      |> Application.fetch_env!(:collection_directory)
-      |> Path.join(relative_path)
-
+  defp cue(relative_path, "play") do
     :ok = cmus_remote([
       ["--stop"],
       ["--queue", "--clear"],
-      ["--queue", absolute_path]
+      ["--queue", get_absolute_path(relative_path)]
     ])
 
     # Give cmus some time to add track(s)
     Process.sleep(500)
 
     :ok = cmus_remote([["--next"], ["--play"]])
+  end
+
+  defp cue(relative_path, "append") do
+    :ok = cmus_remote([
+      ["--queue", get_absolute_path(relative_path)]
+    ])
+  end
+
+  defp get_absolute_path(relative_path) do
+    :live_cue
+    |> Application.fetch_env!(:collection_directory)
+    |> Path.join(relative_path)
   end
 
   defp cmus_remote(commands) when is_list(commands) do

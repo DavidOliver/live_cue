@@ -13,22 +13,42 @@
 	</.button>
 
 	<.button
-		phx-click="play_album"
+		phx-click="cue_album"
+		phx-value-action="play"
 		phx-value-album-id={@album.id}
 		phx-value-album-type={@album.type}
-		class="play-button">
+		class="cue-button">
 		▶
+	</.button>
+
+	<.button
+		phx-click="cue_album"
+		phx-value-action="append"
+		phx-value-album-id={@album.id}
+		phx-value-album-type={@album.type}
+		class="cue-button">
+		➕
 	</.button>
 
 	<ul :if={@album[:tracks]} class="track-list">
 		<li :for={track <- @album.tracks} class="track">
 			<.button
-				phx-click="play_track"
+				phx-click="cue_track"
+				phx-value-action="play"
 				phx-value-album-id={@album.id}
 				phx-value-album-type={@album.type}
 				phx-value-track-number={track[:number]}
-				class="play-button">
+				class="cue-button">
 				▶
+			</.button>
+			<.button
+				phx-click="cue_track"
+				phx-value-action="append"
+				phx-value-album-id={@album.id}
+				phx-value-album-type={@album.type}
+				phx-value-track-number={track[:number]}
+				class="cue-button">
+				➕
 			</.button>
 			<span class="track-number"><%= track[:number] %></span>
 			<span class="track-title"><%= track[:title] %></span>

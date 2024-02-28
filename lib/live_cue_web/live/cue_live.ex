@@ -26,26 +26,24 @@ defmodule LiveCueWeb.CueLive do
   end
 
   @impl true
-  def handle_event("play_album", %{"album-type" => album_type, "album-id" => album_id}, socket) do
-    payload = %{
-      album_id: album_id,
-      album_type: album_type
-    }
-
-    Endpoint.broadcast("player", "request_album_play", payload)
+  def handle_event("cue_album", params, socket) do
+    Endpoint.broadcast("player", "request_album_cue", %{
+      album_id: Map.fetch!(params, "album-id"),
+      album_type: Map.fetch!(params, "album-type"),
+      action: Map.fetch!(params, "action"),
+    })
 
     {:noreply, socket}
   end
 
   @impl true
-  def handle_event("play_track", %{"album-type" => album_type, "album-id" => album_id, "track-number" => track_number}, socket) do
-    payload = %{
-      album_id: album_id,
-      album_type: album_type,
-      track_number: String.to_integer(track_number)
-    }
-
-    Endpoint.broadcast("player", "request_track_play", payload)
+  def handle_event("cue_track", params, socket) do
+    Endpoint.broadcast("player", "request_track_cue", %{
+      album_id: Map.fetch!(params, "album-id"),
+      album_type: Map.fetch!(params, "album-type"),
+      track_number: params |> Map.fetch!("track-number") |> String.to_integer(),
+      action: Map.fetch!(params, "action"),
+    })
 
     {:noreply, socket}
   end
@@ -65,15 +63,15 @@ defmodule LiveCueWeb.CueLive do
   end
 
   @impl true
-  def handle_info(%{topic: "player", event: "request_album_play", payload: payload}, socket) do
-    Task.start(Player, :play_album, [payload])
+  def handle_info(%{topic: "player", event: "request_album_cue", payload: payload}, socket) do
+    Task.start(Player, :cue_album, [payload])
 
     {:noreply, socket}
   end
 
   @impl true
-  def handle_info(%{topic: "player", event: "request_track_play", payload: payload}, socket) do
-    Task.start(Player, :play_track, [payload])
+  def handle_info(%{topic: "player", event: "request_track_cue", payload: payload}, socket) do
+    Task.start(Player, :cue_track, [payload])
 
     {:noreply, socket}
   end
