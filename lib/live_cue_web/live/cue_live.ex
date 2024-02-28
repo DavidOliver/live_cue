@@ -5,14 +5,11 @@ defmodule LiveCueWeb.CueLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    if connected?(socket) do
-      Endpoint.subscribe("player")
-    end
+    if connected?(socket), do: Endpoint.subscribe("player")
 
-    index = Collection.get_index()
     socket =
       socket
-      |> assign(:index, index)
+      |> assign(:index, Collection.get_index())
       |> assign(:track_started_playing, nil)
 
     {:ok, socket}
